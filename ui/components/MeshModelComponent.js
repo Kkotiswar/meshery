@@ -156,13 +156,168 @@ const MeshModelComponent = ({ view, classes }) => {
   }, [view, page, searchText, rowsPerPage]);
 
   const meshmodel_columns = [
-    {
-      name : (view === COMPONENTS || view === RELATIONSHIPS) ? 'kind' : 'displayName',
-      label : `Name`,
-      options : {
-        sort : view === COMPONENTS || view === RELATIONSHIPS ? true : false,
-        searchable : view === RELATIONSHIPS ? false : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+  {
+    name: view === COMPONENTS || view === RELATIONSHIPS ? 'kind' : 'displayName',
+    label: 'Name',
+    options: {
+      sort: true, // enable sorting
+      searchable: view === RELATIONSHIPS ? false : true,
+      customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        return (
+          <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
+            <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <b>{column.label}</b>
+            </TableSortLabel>
+          </TableCell>
+        );
+      },
+      customBodyRender: (value) => (
+        <Tooltip title={value} placement="top">
+          <div>{value}</div>
+        </Tooltip>
+      ),
+    },
+  },
+  {
+    name: view === COMPONENTS || view === RELATIONSHIPS ? 'apiVersion' : 'version',
+    label: view === COMPONENTS || view === RELATIONSHIPS ? 'Api Version' : 'Version',
+    options: {
+      sort: true, // enable sorting
+      searchable: view === RELATIONSHIPS ? false : true,
+      customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        return (
+          <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
+            <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <b>{column.label}</b>
+            </TableSortLabel>
+          </TableCell>
+        );
+      },
+      customBodyRender: (value) => (
+        <Tooltip title={value} placement="top">
+          <div>{value}</div>
+        </Tooltip>
+      ),
+    },
+  },
+  {
+    name: 'category',
+    label: 'Category Name',
+    options: {
+      sort: true, // enable sorting
+      display: view === MODELS ? 'true' : 'false',
+      searchable: true,
+      customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        return (
+          <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
+            <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <b>{column.label}</b>
+            </TableSortLabel>
+          </TableCell>
+        );
+      },
+      customBodyRender: (value) => {
+        if (!(view === RELATIONSHIPS || view === COMPONENTS)) {
+          const { modelDisplayName, name } = value;
+          return (
+            <Tooltip title={view === MODELS ? name : modelDisplayName} placement="top">
+              <div>{view === MODELS ? name : modelDisplayName}</div>
+            </Tooltip>
+          )
+        }
+      },
+    },
+  },
+  {
+    name: 'metadata',
+    label: 'Model',
+    options: {
+      sort: true, // enable sorting
+      display: view === COMPONENTS ? 'true' : 'false',
+      searchable: true,
+      customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        return (
+          <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
+            <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <b>{column.label}</b>
+            </TableSortLabel>
+          </TableCell>
+        );
+      },
+      customBodyRender: (value) => {
+        if (!(view === MODELS || view === RELATIONSHIPS)) {
+          const { modelDisplayName } = value
+          return (
+            <Tooltip title={modelDisplayName} placement="top">
+              <div>{modelDisplayName}</div>
+            </Tooltip>
+          )
+        }
+      },
+    },
+  },
+  {
+    name: 'metadata',
+    label: 'Sub Category',
+    options: {
+      sort: true, // enable sorting
+      display: view === COMPONENTS ? 'true' : 'false',
+      searchable: true,
+      customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        return (
+          <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
+            <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <b>{column.label}</b>
+            </TableSortLabel>
+          </TableCell>
+        );
+      },
+      customBodyRender: (value) => {
+        const { subCategory } = value
+        return (
+          <Tooltip title={subCategory} placement="top">
+            <div>{subCategory}</div>
+          </Tooltip>
+        )
+      },
+    },
+  },
+  {
+    name: 'model',
+    label: 'Model',
+    options: {
+      sort: true, // enable sorting
+      display: view === RELATIONSHIPS ? 'true' : 'false',
+      searchable: false,
+      customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        return (
+          <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
+            <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <b>{column.label}</b>
+            </TableSortLabel>
+          </TableCell>
+        );
+      },
+      customBodyRender: (value) => {
+        if (view === RELATIONSHIPS) {
+          const { displayName } = value
+          return (
+            <Tooltip title={displayName} placement="top">
+              <div>{displayName}</div>
+            </Tooltip>
+          )
+        }
+      },
+    },
+  },
+  {
+    name: 'duplicates',
+    label: 'Duplicates',
+    options: {
+      sort: true, // enable sorting
+      searchable: true,
+      customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        if (view !== RELATIONSHIPS)
           return (
             <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -170,163 +325,18 @@ const MeshModelComponent = ({ view, classes }) => {
               </TableSortLabel>
             </TableCell>
           );
-        },
-        customBodyRender : (value) => (
-          <Tooltip title={value} placement="top">
-            <div>{value}</div>
-          </Tooltip>
-        )
       },
-    },
-    {
-      name : (view === COMPONENTS || view === RELATIONSHIPS) ? 'apiVersion' : 'version',
-      label : (view === COMPONENTS || view === RELATIONSHIPS) ? 'Api Version' : 'Version',
-      options : {
-        sort : false,
-        searchable : view === RELATIONSHIPS ? false : true,
-        customHeadRender : function CustomHead({ index, ...column }) {
+      customBodyRender: (value) => {
+        if (view !== RELATIONSHIPS)
           return (
-            <TableCell align={"start"} key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
-        },
-        customBodyRender : (value) => (
-          <Tooltip title={value} placement="top">
-            <div>{value}</div>
-          </Tooltip>
-        ),
-      },
-    },
-    {
-      name : 'category',
-      label : 'Category Name',
-      options : {
-        sort : false,
-        display : view === MODELS ? 'true' : 'false',
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }) {
-          return (
-            <TableCell align={"start"} key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
-        },
-        customBodyRender : (value) => {
-          if (!(view === RELATIONSHIPS || view === COMPONENTS)) {
-            const { modelDisplayName, name } = value;
-            return (
-              <Tooltip title={view === MODELS ? name : modelDisplayName} placement="top">
-                <div>{view === MODELS ? name : modelDisplayName}</div>
-              </Tooltip>
-            )
-          }
-
-        },
-      },
-    },
-    {
-      name : 'metadata',
-      label : 'Model',
-      options : {
-        sort : false,
-        display : view === COMPONENTS ? 'true' : 'false',
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }) {
-          return (
-            <TableCell align={"start"} key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
-        },
-        customBodyRender : (value) => {
-          if (!(view === MODELS || view === RELATIONSHIPS)) {
-            const { modelDisplayName } = value
-            return (
-              <Tooltip title={modelDisplayName} placement="top">
-                <div>{modelDisplayName}</div>
-              </Tooltip>
-            )
-          }
-        },
-      },
-    },
-    {
-      name : 'metadata',
-      label : 'Sub Category',
-      options : {
-        sort : false,
-        display : view === COMPONENTS ? 'true' : 'false',
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }) {
-          return (
-            <TableCell align={"start"} key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
-        },
-        customBodyRender : (value) => {
-          const { subCategory } = value
-          return (
-            <Tooltip title={subCategory} placement="top">
-              <div>{subCategory}</div>
+            <Tooltip title={value} placement="top">
+              <div>{value}</div>
             </Tooltip>
           )
-        },
-      },
+      }
     },
-    {
-      name : 'model',
-      label : 'Model',
-      options : {
-        sort : false,
-        display : view === RELATIONSHIPS ? 'true' : 'false',
-        searchable : false,
-        customHeadRender : function CustomHead({ index, ...column }) {
-          return (
-            <TableCell align={"start"} key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
-        },
-        customBodyRender : (value) => {
-          if (view === RELATIONSHIPS) {
-            const { displayName } = value
-            return (
-              <Tooltip title={displayName} placement="top">
-                <div>{displayName}</div>
-              </Tooltip>
-            )
-          }
-        },
-      },
-    },
-    {
-      name : 'duplicates',
-      label : 'Duplicates',
-      options : {
-        sort : false,
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }) {
-          if (view !== RELATIONSHIPS)
-            return (
-              <TableCell align={"start"} key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-        },
-        customBodyRender : (value) => {
-          if (view !== RELATIONSHIPS)
-            return (
-              <Tooltip title={value} placement="top">
-                <div>{value}</div>
-              </Tooltip>
-            )
-        }
-      },
-
-    },
-  ]
+  },
+];
 
   const meshmodel_options = {
     rowsPerPage : rowsPerPage,
